@@ -1,0 +1,119 @@
+// File: app/thevenin-lab/page.jsx  (or pages/thevenin-lab.js)
+"use client";
+import { useState } from "react";
+import { motion } from "framer-motion";
+
+export default function TheveninLab() {
+  const [Vs, setVs] = useState(10);
+  const [R1, setR1] = useState(1000);
+  const [R2, setR2] = useState(2000);
+  const [R3, setR3] = useState(3000);
+
+  const Rth = (R1 * R2) / (R1 + R2);
+  const Vth = Vs * (R2 / (R1 + R2));
+  const Iload = Vth / (Rth + R3);
+  const Vload = Iload * R3;
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-rose-100 via-white to-sky-100 text-gray-800 p-6">
+      <header className="text-center mb-8">
+        <h1 className="text-3xl font-bold text-sky-700 mb-2">Virtual Lab: Thevenin’s Theorem</h1>
+        <p className="text-gray-600">A simulation-based experiment on equivalent circuit analysis</p>
+      </header>
+
+      <section className="max-w-5xl mx-auto grid md:grid-cols-2 gap-6">
+        {/* Left column – Theory and Inputs */}
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          transition={{ duration: 0.6 }} 
+          className="bg-white shadow-lg rounded-2xl p-5 border border-gray-200"
+        >
+          <h2 className="text-xl font-semibold text-rose-600 mb-3">Aim</h2>
+          <p className="mb-4">
+            To verify <b>Thevenin’s theorem</b> by determining the Thevenin equivalent voltage (Vth)
+            and resistance (Rth) of a given network and comparing the load voltage with the original circuit.
+          </p>
+
+          <h2 className="text-xl font-semibold text-rose-600 mb-3">Theory</h2>
+          <p className="text-sm leading-relaxed">
+            Thevenin’s theorem states that any linear, bilateral network with voltage and resistors can be replaced by
+            an equivalent single voltage source V<sub>th</sub> in series with a resistance R<sub>th</sub>. 
+            The voltage across and current through a load resistor remain the same as in the original network.
+          </p>
+
+          <h2 className="text-xl font-semibold text-rose-600 mt-6 mb-3">Input Parameters</h2>
+          <div className="space-y-3 text-sm">
+            <label>Vs (V): 
+              <input type="number" value={Vs} onChange={e=>setVs(+e.target.value)} className="ml-2 border rounded p-1 w-24"/>
+            </label><br/>
+            <label>R1 (Ω): 
+              <input type="number" value={R1} onChange={e=>setR1(+e.target.value)} className="ml-2 border rounded p-1 w-24"/>
+            </label><br/>
+            <label>R2 (Ω): 
+              <input type="number" value={R2} onChange={e=>setR2(+e.target.value)} className="ml-2 border rounded p-1 w-24"/>
+            </label><br/>
+            <label>R3 (Load Ω): 
+              <input type="number" value={R3} onChange={e=>setR3(+e.target.value)} className="ml-2 border rounded p-1 w-24"/>
+            </label>
+          </div>
+        </motion.div>
+
+        {/* Right column – Simulation & Results */}
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          transition={{ duration: 0.6, delay: 0.2 }} 
+          className="bg-white shadow-lg rounded-2xl p-5 border border-gray-200"
+        >
+          <h2 className="text-xl font-semibold text-sky-700 mb-3">Simulation Results</h2>
+          <div className="bg-sky-50 rounded-lg p-3 text-sm mb-4">
+            <p>R<sub>th</sub> = {(Rth).toFixed(2)} Ω</p>
+            <p>V<sub>th</sub> = {(Vth).toFixed(2)} V</p>
+            <p>I<sub>load</sub> = {(Iload * 1000).toFixed(3)} mA</p>
+            <p>V<sub>load</sub> = {(Vload).toFixed(2)} V</p>
+          </div>
+
+          <h2 className="text-lg font-semibold text-sky-700 mb-2">Circuit Diagram (Conceptual)</h2>
+          <svg viewBox="0 0 250 160" className="w-full border rounded bg-white">
+            {/* Simple Thevenin equivalent circuit */}
+            <circle cx="40" cy="80" r="15" fill="none" stroke="#2563eb" strokeWidth="2"/>
+            <text x="33" y="84" fontSize="10" fill="#2563eb">Vth</text>
+            <line x1="55" y1="80" x2="120" y2="80" stroke="#2563eb" strokeWidth="2"/>
+            <rect x="120" y="70" width="20" height="20" fill="none" stroke="#f43f5e" strokeWidth="2"/>
+            <text x="122" y="84" fontSize="9" fill="#f43f5e">Rth</text>
+            <line x1="140" y1="80" x2="180" y2="80" stroke="#2563eb" strokeWidth="2"/>
+            <rect x="180" y="70" width="20" height="20" fill="none" stroke="#22c55e" strokeWidth="2"/>
+            <text x="182" y="84" fontSize="9" fill="#22c55e">R3</text>
+            <line x1="200" y1="80" x2="200" y2="120" stroke="#2563eb" strokeWidth="2"/>
+            <line x1="200" y1="120" x2="40" y2="120" stroke="#2563eb" strokeWidth="2"/>
+            <line x1="40" y1="120" x2="40" y2="95" stroke="#2563eb" strokeWidth="2"/>
+          </svg>
+
+          <p className="mt-3 text-sm text-gray-600">
+            The above circuit represents the Thevenin equivalent with values computed dynamically.
+          </p>
+        </motion.div>
+      </section>
+
+      <section className="max-w-5xl mx-auto mt-8 bg-white rounded-2xl shadow p-5 border border-gray-200">
+        <h2 className="text-xl font-semibold text-rose-600 mb-3">Observation Table</h2>
+        <table className="w-full text-sm border-collapse border border-gray-300">
+          <thead className="bg-sky-100">
+            <tr><th className="border p-2">Parameter</th><th className="border p-2">Calculated Value</th></tr>
+          </thead>
+          <tbody>
+            <tr><td className="border p-2">R<sub>th</sub></td><td className="border p-2">{Rth.toFixed(2)} Ω</td></tr>
+            <tr><td className="border p-2">V<sub>th</sub></td><td className="border p-2">{Vth.toFixed(2)} V</td></tr>
+            <tr><td className="border p-2">I<sub>load</sub></td><td className="border p-2">{(Iload*1000).toFixed(3)} mA</td></tr>
+            <tr><td className="border p-2">V<sub>load</sub></td><td className="border p-2">{Vload.toFixed(2)} V</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <footer className="text-center mt-10 text-gray-500 text-sm">
+        © 2025 Virtual Electronics Lab | Styled by GPT-5
+      </footer>
+    </div>
+  );
+}
